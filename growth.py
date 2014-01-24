@@ -8,17 +8,15 @@
 #enter values into the 2-di array
 
 class Strain(object):
-  genotype = ''
-  growth = []
-  error = []
-  numMut = 1
-  mutations = []
-  strainNum = ''
-  def __init__(self, RawGenotype, Growth, Error, StrainNum):
-    self.growth = Growth
-    self.error = Error
+  def __init__(self, StrainNum, RawGenotype):
     self.mutations = []
     self.genotype = ''
+    #list of objects containing Datapoint objects
+    self.rawData = []
+    #average rates at the four temperatures only
+    self.rates = []
+    #error estimates at the four temperatues
+    self.errors = []
     GenotypesList = RawGenotype.split('?')
     self.numMut = len(GenotypesList) - 1
     self.strainNum = StrainNum
@@ -34,12 +32,21 @@ class Strain(object):
       self.genotype = 'WT'
     else:
       self.genotype = ' '.join(self.mutations)
+  def addData(self, Expt, Data):
+    self.rawData.append(Datapoint(Expt, Data))
 
-class Interaction(object):
-  base = object
-  comparison = object
-  outputText = ''
-  color = '#666'  
+class Datapoint(object):
+  def __init__(self, Expt, Data):
+    self.expt = Expt
+    self.data = Data
+    Result = Pattern.search(Expt)
+    if Result:
+      Temp = Result.group(1)
+      self.temp = Temp
+    else:
+      self.temp = None    
+
+class Interaction(object):  
   def __init__(self, BaseStrain, ComparisonStrain):
     self.outputText = ''
     self.color = '#666'
@@ -81,29 +88,30 @@ def WriteBox(File, Color, XPos, YPos):
 
 
 #main script         
+import re
+Pattern = re.compile(r'\-\s(\d+)C\.txt')
+
 Strains = {}
 
-from copy import *
+LookupFile = open('strain_names.txt', 'r')
+for Line in LookupFile:
+  Line = Line.rstrip()
+  ColList = Line.split('\t')
+  StrainNum = ColList[1]
+  if StrainNum not in Strains:
+    Strains[StrainNum] = Strain(StrainNum, ColList[0])
+LookupFile.close()
 
-InFile = open('master_data.txt', 'r')
-LineNum = 0
+InFile = open('growth_rates.txt', 'r')
 for Line in InFile:
-  DataList = Line.split(',')
-  StrainNum = DataList[1]
-  Genotype = DataList[0]
-  x = 2
-  Growth = []
-  Error = []
-  while x < 10:
-    CurrentGrowth = float( DataList[x] ) + float( DataList[x+1] ) / 2
-    CurrentError = abs( float( DataList[x] ) - CurrentGrowth )
-    Growth.append(CurrentGrowth)
-    Error.append(CurrentError)
-    x += 2
-  NewStrain = Strain(Genotype, Growth, Error, StrainNum)
-  Strains[NewStrain.genotype] = NewStrain
-  LineNum += 1
+  Line = Line.rstrip()
+  ColList = Line.split('\t')
+  StrainNum = ColList[5]
+  Strains[StrainNum].addData(ColList[0], float(ColList[2]))
 
+print Strains
+  
+'''
 Cols = ['aip1', 'cap2', 'crn1', 'gmf1', 'srv2', 'twf1']
 Lines = ['WT']
 for x in range(0, 6):
@@ -165,4 +173,6 @@ for Line in Lines:
   
 OutFile.close()  
 SvgFile.write('</svg>')
-SvgFile.close()     
+SvgFile.close()
+'''
+     
