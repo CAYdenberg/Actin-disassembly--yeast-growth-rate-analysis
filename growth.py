@@ -14,9 +14,9 @@ class Strain(object):
     #list of objects containing Datapoint objects
     self.rawData = []
     #average rates at the four temperatures only
-    self.rates = []
+    self.rates = {'25C': None, '30C': None, '34C': None, '37C': None}
     #error estimates at the four temperatues
-    self.errors = []
+    self.errors = {'25C': None, '30C': None, '34C': None, '37C': None}
     GenotypesList = RawGenotype.split('?')
     self.numMut = len(GenotypesList) - 1
     self.strainNum = StrainNum
@@ -34,6 +34,21 @@ class Strain(object):
       self.genotype = ' '.join(self.mutations)
   def addData(self, Expt, Data):
     self.rawData.append(Datapoint(Expt, Data))
+  def queryTemp(self, Temp):
+    ReturnData = []
+    for datapoint in self.rawData:
+      if datapoint.temp == Temp:
+        ReturnData.append(datapoint.data)
+    return ReturnData
+  def getAverage(self, Temp):
+    ReleventData = self.queryTemp(Temp)
+    Sum = 0.0
+    N = 0
+    for Datum in ReleventData:
+      Sum += Datum
+      N += 1
+    self.rates[Temp] = Sum/N
+    return Sum/N  
 
 class Datapoint(object):
   def __init__(self, Expt, Data):
@@ -42,12 +57,13 @@ class Datapoint(object):
     Result = Pattern.search(Expt)
     if Result:
       Temp = Result.group(1)
-      self.temp = Temp
+      self.temp = Temp + 'C'
     else:
       self.temp = None    
 
 class Interaction(object):  
   def __init__(self, BaseStrain, ComparisonStrain):
+    global Temps
     self.outputText = ''
     self.color = '#666'
     if BaseStrain and ComparisonStrain:
@@ -55,26 +71,32 @@ class Interaction(object):
       self.comparison = ComparisonStrain
       Temp = 0
       BreakTempFound = False
-      while Temp < 4 and BreakTempFound == False:
-        MutEffect = self.comparison.growth[Temp] / self.base.growth[Temp]
+      for Temp in Temps:
+        MutEffect = self.comparison.rates[Temp] / self.base.rates[Temp]
         if MutEffect < 0.5:
-          BreakTempFound = True
-        else:
-          Temp += 1
+          break
       self.outputText = str(Temp) + ' ~ ' + str( MutEffect )
-      if Temp == 4:
+      if Temp == '37C' and MutEffect > 0.5:
         self.color = '#006600'
-      elif Temp == 3:
+      elif Temp == '37C':
         self.color = '#CCCC00'
-      elif Temp == 2:
+      elif Temp == '34C':
         self.color = '#FFFF00'
-      elif Temp == 1:
+      elif Temp == '30C':
         self.color = '#FF9900'
-      elif Temp == 0:
+      elif Temp == '25C':
         self.color = '#FF6600'
     else:
       self.outputText = 'ND'
       self.color = 'Black'
+
+def GetStrain(Genotype):
+  global Strains
+  for StrainNum in Strains:
+    if Strains[StrainNum].genotype == Genotype:
+      return Strains[StrainNum]
+  return False
+    
 
 #write text in an SVG file      
 def WriteText(File, Text, XPos, YPos):
@@ -89,7 +111,9 @@ def WriteBox(File, Color, XPos, YPos):
 
 #main script         
 import re
+import copy
 Pattern = re.compile(r'\-\s(\d+)C\.txt')
+Temps = ['25C', '30C', '34C', '37C']
 
 Strains = {}
 
@@ -108,23 +132,33 @@ for Line in InFile:
   ColList = Line.split('\t')
   StrainNum = ColList[5]
   Strains[StrainNum].addData(ColList[0], float(ColList[2]))
+InFile.close()
 
-print Strains
-  
-'''
+OutFile = open('growth_rates_parsed.txt', 'w')
+for StrainNum in Strains:
+  OutFile.write(StrainNum + '\t')
+  OutFile.write(Strains[StrainNum].genotype + '\n')
+  for Temp in Temps:
+    Data = Strains[StrainNum].queryTemp(Temp)
+    OutFile.write('\t' + Temp + '\t')
+    for Datum in Data:
+      OutFile.write(str(Datum) + '\t')
+    Average = Strains[StrainNum].getAverage(Temp)
+    OutFile.write(str(Average) + '\n')
+
 Cols = ['aip1', 'cap2', 'crn1', 'gmf1', 'srv2', 'twf1']
-Lines = ['WT']
+Genotypes = ['WT']
 for x in range(0, 6):
-  Lines.append(Cols[x])
+  Genotypes.append(Cols[x])
 for x in range(0, 6):
   for y in range(x+1, 6):
-    Lines.append(Cols[x] + ' ' + Cols[y])
+    Genotypes.append(Cols[x] + ' ' + Cols[y])
 for x in range(0, 6):
   for y in range(x+1, 6):
     for z in range(y+1, 6):
-      Lines.append(Cols[x] + ' ' + Cols[y] + ' ' + Cols[z])
+      Genotypes.append(Cols[x] + ' ' + Cols[y] + ' ' + Cols[z])
 
-OutFile = open('growth_rates_parsed.txt', 'w')
+OutFile.write('SUMMARY\n')
 SvgFile = open('growth_rate_heatmap.svg', 'w')
 
 SvgX = 100
@@ -142,28 +176,25 @@ OutFile.write('\n')
 SvgY += 50
 SvgX = 0
 
-for Line in Lines:
-  try:
-    BaseStrain = Strains[Line]
-    OutFile.write(BaseStrain.genotype + '\t')
-    WriteText(SvgFile, BaseStrain.genotype, SvgX, SvgY)
-  except:
-    continue
+for BaseGenotype in Genotypes:
+  BaseStrain = GetStrain(BaseGenotype)
+  if not BaseStrain:
+    continue  
+  OutFile.write(BaseGenotype + '\t')
+  WriteText(SvgFile, BaseGenotype, SvgX, SvgY)
   SvgX += 50    
   for Col in Cols:
     if Col in BaseStrain.mutations:
       OutFile.write('\t')
       WriteBox(SvgFile, 'Black', SvgX, SvgY)
     else:
-      CompositeMutations = copy(BaseStrain.mutations)
+      CompositeMutations = copy.copy(BaseStrain.mutations)
       CompositeMutations.append(Col)
       CompositeMutations.sort()
-      SearchStr = ' '.join(CompositeMutations)
-      try:
-        ComparisonStrain = Strains[SearchStr]
-        CurrentCell = Interaction(BaseStrain, ComparisonStrain)
-      except:
-        CurrentCell = Interaction(False, False)
+      ComparisonGenotype = ' '.join(CompositeMutations)
+      ComparisonStrain = GetStrain(ComparisonGenotype)
+      #Note that ComparisonStrain can be False. Interaction can handle this.
+      CurrentCell = Interaction(BaseStrain, ComparisonStrain)
       OutFile.write(CurrentCell.outputText + '\t')
       WriteBox(SvgFile, CurrentCell.color, SvgX, SvgY)
     SvgX += 50
@@ -173,6 +204,4 @@ for Line in Lines:
   
 OutFile.close()  
 SvgFile.write('</svg>')
-SvgFile.close()
-'''
-     
+SvgFile.close()     
