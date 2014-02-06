@@ -384,7 +384,7 @@ raw/AJ11.24.12 Tecan growth - 30C.txt	H11	0.001821371	0.999699591		H11	AJY82
 raw/aj12.14.12 Tecan growth - 37C.txt	A10	0.002821	manual		A10	AJY80															
 raw/aj12.14.12 Tecan growth - 37C.txt	A11	0.002798129	0.996766617		A11	AJY91															
 raw/aj12.14.12 Tecan growth - 37C.txt	B10	3.47967E-05	manual		B10	AJY78															
-raw/aj12.14.12 Tecan growth - 37C.txt	B11	0.000317293	0.762902382		B11	AJY89															
+raw/aj12.14.12 Tecan growth - 37C.txt	B11	0.001312	manual		B11	AJY89															
 raw/aj12.14.12 Tecan growth - 37C.txt	B2	0.006140575	0.999859204		B2	AJY2															
 raw/aj12.14.12 Tecan growth - 37C.txt	B3	0.00603367	0.999852218		B3	AJY12															
 raw/aj12.14.12 Tecan growth - 37C.txt	B4	0.000409954	0.954320202		B4	AJY16															
@@ -407,7 +407,7 @@ raw/aj12.14.12 Tecan growth - 37C.txt	D10	0.002082872	0.99520717		D10	AJY73
 raw/aj12.14.12 Tecan growth - 37C.txt	D11	0.003587206	0.999210264		D11	AJY87															
 raw/aj12.14.12 Tecan growth - 37C.txt	D2	0.000903489	0.957548805		D2	AJY42															
 raw/aj12.14.12 Tecan growth - 37C.txt	D3	0.004174604	0.999451494		D3	AJY44															
-raw/aj12.14.12 Tecan growth - 37C.txt	D4	0.000530492	0.670554617		D4	AJY47															
+raw/aj12.14.12 Tecan growth - 37C.txt	D4	0.000203	manual		D4	AJY47															
 raw/aj12.14.12 Tecan growth - 37C.txt	D5	0.002445368	0.999207097		D5	AJY69															
 raw/aj12.14.12 Tecan growth - 37C.txt	D6	0	manual		D6	AJY73															
 raw/aj12.14.12 Tecan growth - 37C.txt	D7	0	manual		D7	AJY76															
@@ -421,7 +421,7 @@ raw/aj12.14.12 Tecan growth - 37C.txt	E4	0.002330612	0.997089097		E4	AJY84
 raw/aj12.14.12 Tecan growth - 37C.txt	E5	0.002631465	0.998285481		E5	AJY86															
 raw/aj12.14.12 Tecan growth - 37C.txt	E6	0.003129401	0.999533841		E6	AJY87															
 raw/aj12.14.12 Tecan growth - 37C.txt	E7	0.001922771	0.987124086		E7	AJY88															
-raw/aj12.14.12 Tecan growth - 37C.txt	E8	0.000191657	0.646138335		E8	AJY89															
+raw/aj12.14.12 Tecan growth - 37C.txt	E8	0.001009117	manual		E8	AJY89															
 raw/aj12.14.12 Tecan growth - 37C.txt	E9	0.002489394	0.99658994		E9	AJY91															
 raw/aj12.14.12 Tecan growth - 37C.txt	F10	0.000747754	0.997470028		F10	AJY47															
 raw/aj12.14.12 Tecan growth - 37C.txt	F11	0.001937648	0.994443132		F11	AJY84															
@@ -447,9 +447,9 @@ raw/aj12.14.12 Tecan growth - 37C.txt	H10	0.000805596	0.939992092		H10	AJY42
 raw/aj12.14.12 Tecan growth - 37C.txt	H11	0.001001935	0.994494014		H11	AJY82															
 raw/AJ12.07.12 Tecan growth - 34C.txt	A1	0.004942611	0.986762204		A1	AJY2															
 raw/AJ12.07.12 Tecan growth - 34C.txt	A2	0.005653865	0.992641763		A2	AJY12															
-raw/AJ12.07.12 Tecan growth - 34C.txt	A3	7.43E-05	0.029230771		A3	AJY16															
-raw/AJ12.07.12 Tecan growth - 34C.txt	A4	0.000470877	0.448053655		A4	AJY19															
-raw/AJ12.07.12 Tecan growth - 34C.txt	A5	-8.60E-05	0.061317		A5	AJY20															
+raw/AJ12.07.12 Tecan growth - 34C.txt	A3	2.26E-05	manual		A3	AJY16															
+raw/AJ12.07.12 Tecan growth - 34C.txt	A4	5.14288E-05	manual		A4	AJY19															
+raw/AJ12.07.12 Tecan growth - 34C.txt	A5	1.99E-05	manual		A5	AJY20															
 raw/AJ12.07.12 Tecan growth - 34C.txt	A6	0.006867259	0.995376995		A6	AJY22															
 raw/AJ12.07.12 Tecan growth - 34C.txt	A7	0.004400976	0.997632328		A7	AJY24															
 raw/AJ12.07.12 Tecan growth - 34C.txt	A8	0.00640753	0.994843788		A8	AJY27															
@@ -508,4 +508,4 @@ raw/AJ12.07.12 Tecan growth - 34C.txt	H4	5.12296E-05	manual		H4	AJY69
 raw/AJ12.07.12 Tecan growth - 34C.txt	H5	3.65E-05	manual		H5	AJY73															
 raw/AJ12.07.12 Tecan growth - 34C.txt	H6	1.71E-05	manual		H6	AJY76															
 raw/AJ12.07.12 Tecan growth - 34C.txt	H7	0.00119574	0.96489355		H7	AJY78															
-raw/AJ12.07.12 Tecan growth - 34C.txt	H8	1.62472E-05	manual		H8	AJY80								
+raw/AJ12.07.12 Tecan growth - 34C.txt	H8	1.62472E-05	manual		H8	AJY80
