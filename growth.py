@@ -130,7 +130,7 @@ InFile = open('growth_rates.txt', 'r')
 for Line in InFile:
   Line = Line.rstrip()
   ColList = Line.split('\t')
-  StrainNum = ColList[5]
+  StrainNum = ColList[6]
   Strains[StrainNum].addData(ColList[0], float(ColList[2]))
 InFile.close()
 
