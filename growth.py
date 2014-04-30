@@ -1,12 +1,3 @@
-#read all the data into a library indexed by strain number
-
-#extract the genotype into a series of boolean values and the total number of mutations
-
-#create a 2-dimensional array for output
-
-#find 0 < n < 3 mutations, alphabetically ordered, find each mutant + 1,
-#enter values into the 2-di array
-
 class Strain(object):
   def __init__(self, StrainNum, RawGenotype):
     self.mutations = []
