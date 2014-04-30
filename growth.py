@@ -158,12 +158,16 @@ for StrainNum in Strains:
     OutFile.write(str(Average) + '\n')
 
 Cols = ['aip1', 'cap2', 'crn1', 'gmf1', 'srv2', 'twf1']
+#create rows of possible genotypes
 Genotypes = ['WT']
+#single mutants
 for x in range(0, 6):
   Genotypes.append(Cols[x])
+#double mutants
 for x in range(0, 6):
   for y in range(x+1, 6):
     Genotypes.append(Cols[x] + ' ' + Cols[y])
+#triple mutants
 for x in range(0, 6):
   for y in range(x+1, 6):
     for z in range(y+1, 6):
