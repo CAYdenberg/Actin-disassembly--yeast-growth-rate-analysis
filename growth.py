@@ -1,8 +1,14 @@
+#main class containing all information about a strain
+#its genotype, as both a string and as a list
+#all the raw data, stored in Datapoint objects
+#the averaged rates (at each temp) and the estimated errors
 class Strain(object):
+  #create strain object with StrainNum, and genotype
+  #munge and insert genotype information
   def __init__(self, StrainNum, RawGenotype):
     self.mutations = []
     self.genotype = ''
-    #list of objects containing Datapoint objects
+    #list of Datapoint objects associated with this strain
     self.rawData = []
     #average rates at the four temperatures only
     self.rates = {'25C': None, '30C': None, '34C': None, '37C': None}
@@ -23,14 +29,17 @@ class Strain(object):
       self.genotype = 'WT'
     else:
       self.genotype = ' '.join(self.mutations)
+  #add a new Datapoint
   def addData(self, Expt, Data):
     self.rawData.append(Datapoint(Expt, Data))
+  #return all of the data for a specific temperature
   def queryTemp(self, Temp):
     ReturnData = []
     for datapoint in self.rawData:
       if datapoint.temp == Temp:
         ReturnData.append(datapoint.data)
     return ReturnData
+  #assign and return the average growth rate for a specific temperature
   def getAverage(self, Temp):
     ReleventData = self.queryTemp(Temp)
     Sum = 0.0
@@ -41,6 +50,9 @@ class Strain(object):
     self.rates[Temp] = Sum/N
     return Sum/N  
 
+#storage object for Datapoints. Contains the experiment, temperature, and
+#data value. The strain is not a property, because this object is always
+#associated with a given strain.
 class Datapoint(object):
   def __init__(self, Expt, Data):
     self.expt = Expt
@@ -52,6 +64,12 @@ class Datapoint(object):
     else:
       self.temp = None    
 
+#Comparison of two strains.
+#Finds the temperature at which the ComparisonStrain grows at half the rate
+#of the BaseStrain (called the BreakTemp).
+#Properties: base - base strain, comparison - comparison strain, outputText - 
+#the text which will describe the BreakTemp and the growth rate at the BreakTemp,
+#color - the color of the box for this comparison in the final chart.
 class Interaction(object):  
   def __init__(self, BaseStrain, ComparisonStrain):
     global Temps
@@ -81,6 +99,8 @@ class Interaction(object):
       self.outputText = 'ND'
       self.color = 'Black'
 
+#Given a string Genotype (correctly ordered), find and return the strain
+#which has that genotype
 def GetStrain(Genotype):
   global Strains
   for StrainNum in Strains:
