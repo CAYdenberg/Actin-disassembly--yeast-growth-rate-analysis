@@ -1,42 +1,19 @@
-#returns a list of numbers smoothed by averaging a sliding
-#window of data points. 
-#Input - an initial set of floats
-#WindowSize - size of the sliding window to be averaged.
-#WindowSize should be an odd number (5, 7, 9)
-#So that the input and output lists are the same length,
-#values of "None" are inserted at the beginning and at
-#the end
-#this function requires the math module
-def Smooth(Input, WindowSize):
-  OffsetSize = int(math.floor(WindowSize / 2))
-  Smoothed = [None] * OffsetSize
-  for x in range(OffsetSize, len(Input) - OffsetSize):
-    Window = Input[x - OffsetSize : x + OffsetSize + 1]
-    WindowSum = math.fsum(Window)
-    WindowValue = WindowSum / KernelSize
-    Smoothed.append(WindowValue)
-  for x in range(len(Input) - OffsetSize, len(Input)):
-    Smoothed.append(None)
-  return Smoothed
+#this script extracts growth curves from a Tecan plate reader and creates 
+#list of doubling time. Raw data to be analyzed should be placed in the "raw"
+#directory. A single text file listing filenames, column headings,
+#calculated doubling time, and R2 (confidence) will be
+#created in response.
 
-#returns the numerical derivative of a list of numbers
-#obtained by subtraction of each datapoint from the one
-#previous.
-#So that the input and output lists are the same length,
-#the first item will have a value of None.
-#Any datapoints that initially have a value of None
-#will also have a value of None
-def NumericDerive(Input):
-  Derivs = [None]
-  for x in range(1, len(Input)):
-    try:
-      Diff = Input[x] - Input[x - 1]
-    except:
-      Diff = None
-    Derivs.append(Diff)
-  return Derivs      
+#Note that the Tecan can create files in a variety of formats. This script
+#is built for tab-separated text files in which each column represents a single
+#well.
 
+#The doubling time is calculated between OD 0.200 and 0.500. 
 
+#from arrays of x and y values, calculate linear regression statistics
+#m - the slope
+#b - the y-intercept
+#r2 - the R-squared (goodness of fit)
 class RegressionLine:
   def __init__(self, xVals, yVals):
     if len(xVals) != len(yVals):
@@ -59,6 +36,8 @@ class RegressionLine:
     self.r2 = math.pow((len(xVals) * sumXY - sumX * sumY)/math.sqrt((len(xVals) *
      sumXX - sumX * sumX) * (len(xVals) * sumYY - sumY * sumY)), 2)
 
+#calculates the growth rate (1/the doubling time) for the range of values
+#between OD 0.200 and 0.500
 def GetGrowthRate(Times, ODs):
   Logs = []
   StartRange = 0
@@ -83,12 +62,12 @@ def GetGrowthRate(Times, ODs):
 
 
 def ParseFile(InFileName):
-  global digits
+  global digits #regex to find digits, necessary to extract time values
   
   InFile = open(InFileName, 'r')
   Times = []
-  ODs = {}
-  ColNames = []
+  ODs = {} #dict of data for each column
+  ColNames = [] #list of column names
   
   #read in raw data
   LineNum = 0
@@ -125,7 +104,7 @@ def ParseFile(InFileName):
           ODs[ColName].append(OD)  
         ColNum += 1
     LineNum += 1
-
+  #print out the information for each well to a new line
   for ColName in ColNames:
     if ColName:
       GrowthRate = GetGrowthRate(Times, ODs[ColName])
@@ -134,6 +113,7 @@ def ParseFile(InFileName):
         OutFile.write(OutString + '\n')
         print OutString
 
+#main script
 import os      
 import math
 import re
@@ -147,12 +127,4 @@ Files = os.listdir(Dir)
 
 for File in Files:
   if os.path.isfile(Dir + File):
-    ParseFile(Dir + File)
-
-    
-
-
-
-  
-
- 
+    ParseFile(Dir + File) 
