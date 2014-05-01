@@ -137,7 +137,7 @@ for Line in LookupFile:
     Strains[StrainNum] = Strain(StrainNum, ColList[0])
 LookupFile.close()
 
-InFile = open('growth_rates.txt', 'r')
+InFile = open('munged_growth_rates.txt', 'r')
 for Line in InFile:
   Line = Line.rstrip()
   ColList = Line.split('\t')
